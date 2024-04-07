@@ -7,18 +7,17 @@
 @implementation UMengflutterpluginForUMCommon
 
 + (BOOL)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result{
-    BOOL resultCode = YES;
-    if ([@"initCommon" isEqualToString:call.method]){
-        NSArray* arguments = (NSArray *)call.arguments;
-        NSString* appkey = arguments[0];
-        NSString* channel = arguments[1];
-        [UMConfigure initWithAppkey:appkey channel:channel];
-        //result(@"success");
-    }
-    else{
-        resultCode = NO;
-    }
-    return resultCode;
+  BOOL resultCode = YES;
+  if ([@"initCommon" isEqualToString:call.method]){
+    NSArray* arguments = (NSArray *)call.arguments;
+    NSString* appkey = arguments[0];
+    NSString* channel = arguments[1];
+    [UMConfigure initWithAppkey:appkey channel:channel];
+  }
+  else{
+    resultCode = NO;
+  }
+  return resultCode;
 }
 @end
 
@@ -27,49 +26,42 @@
 @implementation UMengflutterpluginForAnalytics : NSObject
 
 + (BOOL)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result{
-    BOOL resultCode = YES;
-    NSArray* arguments = (NSArray *)call.arguments;
-    if ([@"onEvent" isEqualToString:call.method]){
-        NSString* eventName = arguments[0];
-        NSDictionary* properties = arguments[1];
-        [MobClick event:eventName attributes:properties];
-        //result(@"success");
-    }
-    else if ([@"onProfileSignIn" isEqualToString:call.method]){
-        NSString* userID = arguments[0];
-        [MobClick profileSignInWithPUID:userID];
-        //result(@"success");
-    }
-    else if ([@"onProfileSignOff" isEqualToString:call.method]){
-        [MobClick profileSignOff];
-        //result(@"success");
-    }
-    else if ([@"setPageCollectionModeAuto" isEqualToString:call.method]){
-        [MobClick setAutoPageEnabled:YES];
-        //result(@"success");
-    }
-    else if ([@"setPageCollectionModeManual" isEqualToString:call.method]){
-        [MobClick setAutoPageEnabled:NO];
-        //result(@"success");
-    }
-    else if ([@"onPageStart" isEqualToString:call.method]){
-        NSString* pageName = arguments[0];
-        [MobClick beginLogPageView:pageName];
-        //result(@"success");
-    }
-    else if ([@"onPageEnd" isEqualToString:call.method]){
-        NSString* pageName = arguments[0];
-        [MobClick endLogPageView:pageName];
-        //result(@"success");
-    }
-    else if ([@"reportError" isEqualToString:call.method]){
-        NSLog(@"reportError API not existed ");
-        //result(@"success");
-     }
-    else{
-        resultCode = NO;
-    }
-    return resultCode;
+  BOOL resultCode = YES;
+  NSArray* arguments = (NSArray *)call.arguments;
+  if ([@"onEvent" isEqualToString:call.method]){
+    NSString* eventName = arguments[0];
+    NSDictionary* properties = arguments[1];
+    [MobClick event:eventName attributes:properties];
+  }
+  else if ([@"onProfileSignIn" isEqualToString:call.method]){
+    NSString* userID = arguments[0];
+    [MobClick profileSignInWithPUID:userID];
+  }
+  else if ([@"onProfileSignOff" isEqualToString:call.method]){
+    [MobClick profileSignOff];
+  }
+  else if ([@"setPageCollectionModeAuto" isEqualToString:call.method]){
+    [MobClick setAutoPageEnabled:YES];
+  }
+  else if ([@"setPageCollectionModeManual" isEqualToString:call.method]){
+    [MobClick setAutoPageEnabled:NO];
+  }
+  else if ([@"onPageStart" isEqualToString:call.method]){
+    NSString* pageName = arguments[0];
+    [MobClick beginLogPageView:pageName];
+  }
+  else if ([@"onPageEnd" isEqualToString:call.method]){
+    NSString* pageName = arguments[0];
+    [MobClick endLogPageView:pageName];
+  }
+  else if ([@"reportError" isEqualToString:call.method]){
+    NSLog(@"reportError API not existed ");
+    resultCode = NO;
+  }
+  else{
+    resultCode = NO;
+  }
+  return resultCode;
 }
 
 @end
@@ -77,8 +69,8 @@
 @implementation UmengCommonSdkPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"umeng_common_sdk"
-            binaryMessenger:[registrar messenger]];
+                                   methodChannelWithName:@"umeng_common_sdk"
+                                   binaryMessenger:[registrar messenger]];
   UmengCommonSdkPlugin* instance = [[UmengCommonSdkPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
@@ -89,14 +81,20 @@
   } else {
     //result(FlutterMethodNotImplemented);
   }
-
-    BOOL resultCode = [UMengflutterpluginForUMCommon handleMethodCall:call result:result];
-    if (resultCode) return;
-
-    resultCode = [UMengflutterpluginForAnalytics handleMethodCall:call result:result];
-    if (resultCode) return;
-
-    result(FlutterMethodNotImplemented);
+  
+  BOOL resultCode = [UMengflutterpluginForUMCommon handleMethodCall:call result:result];
+  if (resultCode) {
+    result(NULL);
+    return;
+  }
+  
+  resultCode = [UMengflutterpluginForAnalytics handleMethodCall:call result:result];
+  if (resultCode) {
+    result(NULL);
+    return;
+  }
+  
+  result(FlutterMethodNotImplemented);
 }
 
 @end
