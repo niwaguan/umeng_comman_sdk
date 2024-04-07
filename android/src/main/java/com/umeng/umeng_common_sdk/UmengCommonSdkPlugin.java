@@ -44,7 +44,7 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
       Class<?> agent = Class.forName("com.umeng.analytics.MobclickAgent");
       Method[] methods = agent.getDeclaredMethods();
       for (Method m : methods) {
-        android.util.Log.e("UMLog", "Reflect:"+m);
+        android.util.Log.i("UMLog", "Reflect:"+m);
         if(m.getName().equals("onEventObject")) {
           versionMatch = true;
           break;
@@ -55,7 +55,7 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
         //return;
       }
       else {
-        android.util.Log.e("UMLog", "安卓依赖版本检查成功");
+        android.util.Log.i("UMLog", "安卓依赖版本检查成功");
       }
     }
     catch (Exception e) {
@@ -86,7 +86,7 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
     onAttachedEngineAdd();
   }
 
-  private static Context mContext = null;
+  private Context mContext = null;
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
@@ -102,9 +102,11 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
           break;
         case "preInit":
           preInit(args);
+          result.success(null);
           break;
         case "initCommon":
           initCommon(args);
+          result.success(null);
           break;
         case "onEvent":
           onEvent(args);
@@ -136,7 +138,7 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
       }
     } catch (Exception e) {
       e.printStackTrace();
-      android.util.Log.e("Umeng", "Exception:"+e.getMessage());
+      android.util.Log.e("UMLog", "Exception:"+e.getMessage());
     }
   }
 
@@ -146,18 +148,11 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
   }
 
   private static Boolean versionMatch = false;
-
-  public static void setContext (Context ctx) {
-    mContext = ctx;
-  }
-
-  public static Context getContext () {
-    return mContext;
-  }
-
   private void preInit(List<String> args) {
     String appKey = args.get(0);
-    UMConfigure.preInit(mContext, appKey, "Umeng");
+    String channel = args.get(1);
+    UMConfigure.preInit(mContext, appKey, channel);
+    android.util.Log.i("UMLog", "preInit");
   }
 
   private void initCommon(List args) {
@@ -168,7 +163,8 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
       pushSecret = (String)args.get(2);
     }
     
-    UMConfigure.init(getContext(), appkey, channel, UMConfigure.DEVICE_TYPE_PHONE, pushSecret);
+    UMConfigure.init(mContext, appkey, channel, UMConfigure.DEVICE_TYPE_PHONE, pushSecret);
+    android.util.Log.i("UMLog", "init");
     // android.util.Log.i("UMLog", "initCommon:"+appkey+"@"+channel);
     // if (!TextUtils.isEmpty(pushSecret)) {
     //   android.util.Log.i("UMLog", "initCommon:"+"pushSecret :"+ pushSecret);
@@ -182,7 +178,7 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
       map = (Map) args.get(1);
     }
     //JSONObject properties = new JSONObject(map);
-    MobclickAgent.onEventObject(getContext(), event, map);
+    MobclickAgent.onEventObject(mContext, event, map);
 
     if(map!=null) {
 //      android.util.Log.i("UMLog", "onEventObject:"+event+"("+map.toString()+")");
@@ -227,7 +223,7 @@ public class UmengCommonSdkPlugin implements FlutterPlugin, MethodCallHandler, A
 
   private void reportError(List args){
     String error = (String)args.get(0);
-    MobclickAgent.reportError(getContext(), error);
+    MobclickAgent.reportError(mContext, error);
     android.util.Log.i("UMLog", "reportError:"+error);
   }
 

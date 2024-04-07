@@ -11,9 +11,9 @@ class UmengCommonSdk {
     return version;
   }
 
-  static Future<dynamic> preInit(String androidAppkey) async {
+  static Future<dynamic> preInit(String androidAppKey, String channel) async {
     if (Platform.isAndroid) {
-      List<dynamic> params = [androidAppkey];
+      List<dynamic> params = [androidAppKey, channel];
       final dynamic result = await _channel.invokeMethod('preInit', params);
       return result;
     }
