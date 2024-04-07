@@ -9,6 +9,7 @@
 + (BOOL)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result{
   BOOL resultCode = YES;
   if ([@"initCommon" isEqualToString:call.method]){
+    // [UMConfigure setLogEnabled:YES];
     NSArray* arguments = (NSArray *)call.arguments;
     NSString* appkey = arguments[0];
     NSString* channel = arguments[1];
@@ -73,7 +74,15 @@
                                    binaryMessenger:[registrar messenger]];
   UmengCommonSdkPlugin* instance = [[UmengCommonSdkPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
+//  [registrar addApplicationDelegate:instance];
 }
+
+//- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+//  if ([MobClick handleUrl:url]) {
+//    return YES;
+//  }
+//  return NO;
+//}
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"getPlatformVersion" isEqualToString:call.method]) {
